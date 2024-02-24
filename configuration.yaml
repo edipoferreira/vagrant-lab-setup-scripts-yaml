@@ -1,0 +1,77 @@
+vagrant_api_version: "2"
+host_os: "generic/ubuntu2204"
+default_user: ubuntu
+default_user_password: passwordUbunut88
+
+
+ssh_key:
+  copy_ssh_pub_key: true
+  pub_key_name: vagrant-ubuntu.pub
+  pub_key_path: ~/.ssh/
+  pub_key_destination: /tmp/
+
+servers:
+  control_planes:
+    control-plane-0:
+      memory: 8000
+      cpus: "4"
+      ip: "192.168.122.200"
+      root_disk_size: 200
+
+  workers_nodes:
+    worker-0:
+      memory: 4000
+      cpus: "4"
+      ip: "192.168.122.230"
+    worker-1:
+      memory: 4000
+      cpus: "4"
+      ip: "192.168.122.231"
+
+
+
+
+control_planes:
+  control-plane-0:
+    memory: 8000
+    cpus: 4
+    ip: "192.168.122.200"
+    root_disk_size: 200
+
+workers_nodes:
+  worker-0:
+    memory: 4000
+    cpus: 4
+    ip: "192.168.122.230"
+  worker-1:
+    memory: 4000
+    cpus: 4
+    ip: "192.168.122.231"
+
+shell_commands: |
+  ls -ltra /tmp/ >> /tmp/lista.txt
+  date >> /tmp/lista.txt
+
+
+shell_scripts:
+  resize_fs_ubuntu_lvm:
+    description: |
+      script to resize fileystem on ubuntu, tested on 22.04.
+      disk used on pv as example is
+      /dev/vda3
+      pv is called:
+      /dev/vda3
+      parted command used to rewrite GPT table.
+    script_path: scripts/resize_fs.sh
+  add_default_user:
+    description: "add a default user, this is a simple script to add a default user, latter can be better parametrized for new users. \nas the remina setup will be performed with ansible, so only one user added\n"
+    script_path: scripts/add_user.sh
+  change_dns:
+    description: |
+      On vms created by qemu on wsl, dns resolution is slow, very slow, I not worked deep on this to see the root cause but seems something that happens with others. 
+      So, this startup script help change the default dns server, you can change for others means if needed.
+    script_path: scripts/change_dns.sh
+  copy_ssh_pub:
+    description: |
+      script to copy a given ssh pub to a vagrant server.
+    script_path: scripts/copy_ssh_pub.sh
